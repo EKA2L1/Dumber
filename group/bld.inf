@@ -1,0 +1,15 @@
+/*
+============================================================================
+ Name		: bld.inf
+ Author	  : bentokun
+ Copyright   : Copyright 2018 Bentokun
+ Description : This file provides the information required for building the
+				whole of a Dumber.
+============================================================================
+*/
+
+PRJ_PLATFORMS
+DEFAULT
+
+PRJ_MMPFILES
+Dumber.mmp
