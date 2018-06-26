@@ -27,20 +27,24 @@ namespace Dumber {
     class TDumberFile {
         TDumberOpenMode iOpenMode;
         RFile iFile;
-        RFs iFs;
+        RFs *iFs;
         
     public:
         TDumberFile();
         ~TDumberFile();
         
+        TUint64 Tell();
+        
         void ConstructL(TDesC &aFileName, const TDumberOpenMode aMode);
         void WriteL(TDesC8 &aData);
+        void WriteL(TDesC16 &aData);
         void ReadL(TDes8 &aData);
         
         static TDumberFile *NewL(TDesC &aFileName, TDumberOpenMode aMode);
         static TDumberFile *NewLC(TDesC &aFileName, TDumberOpenMode aMode);
         
         void Seek(const TUint64 aOff, const TDumberSeekMode aMode);
+        void WriteL(const TUint64 aOff, TDesC8 &aContent);
         
         TUint64 Size() const;
     };

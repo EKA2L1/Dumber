@@ -12,4 +12,7 @@ const TInt KErrUnknownMode = -102;
  */
 const TInt KErrInvalidRequest = -103;
 
+/* PANIC */
+const TInt KDumberOutOfRange = 0;
+
 #endif

@@ -1,39 +1,35 @@
 #include <Dumber/DumberFile.h>
 #include <Dumber/DumberErr.h>
+#include <Dumber/DumberBootstrap.h>
 
 namespace Dumber {
-    TDumberFile::TDumberFile() {
-    	
-    }
+    TDumberFile::TDumberFile() {}
     
     TDumberFile::~TDumberFile() {
     	iFile.Close();
-    	iFs.Close();
     }
 
     void TDumberFile::ConstructL(TDesC &aFileName, const TDumberOpenMode aMode) {
     	iOpenMode = aMode;
    
-    	User::LeaveIfError(iFs.Connect(12));
-    	
     	switch (iOpenMode) {
     		case EDumberOpenRead: {
-    		    User::LeaveIfError(iFile.Open(iFs, aFileName, EFileRead));
+    		    User::LeaveIfError(iFile.Open(*iFs, aFileName, EFileRead));
     		    break;
     		}
     		
     		case EDumberOpenWrite: {
-    		    User::LeaveIfError(iFile.Open(iFs, aFileName, EFileWrite));
+    		    User::LeaveIfError(iFile.Open(*iFs, aFileName, EFileWrite));
     		    break;
     		}
     		
     		case EDumberReplaceRead: {
-    		    User::LeaveIfError(iFile.Replace(iFs, aFileName, EFileRead));
+    		    User::LeaveIfError(iFile.Replace(*iFs, aFileName, EFileRead));
     		    break;
     		}
 
     		case EDumberReplaceWrite: {
-    		    User::LeaveIfError(iFile.Replace(iFs, aFileName, EFileWrite));
+    		    User::LeaveIfError(iFile.Replace(*iFs, aFileName, EFileWrite));
     		    break;
     		}
     		
@@ -51,6 +47,27 @@ namespace Dumber {
     	}
     	
     	User::Leave(KErrInvalidRequest);
+    }
+
+    void TDumberFile::WriteL(TDesC16 &aData) {
+    	TPtrC8 temp;
+    	temp.Set(reinterpret_cast<const TUint8*>(aData.Ptr()), aData.Length() * 2);
+    	
+    	if (iOpenMode == EDumberReplaceWrite || iOpenMode == EDumberOpenWrite) {
+			User::LeaveIfError(iFile.Write(temp));
+			return;
+		}
+		
+		User::Leave(KErrInvalidRequest);
+    }
+
+    void TDumberFile::WriteL(const TUint64 aOff, TDesC8 &aContent) {
+    	if (iOpenMode == EDumberReplaceWrite || iOpenMode == EDumberOpenWrite) {
+			User::LeaveIfError(iFile.Write(aOff,aContent));
+			return;
+		}
+		
+		User::Leave(KErrInvalidRequest);
     }
 
     void TDumberFile::ReadL(TDes8 &aData) {
@@ -111,5 +128,12 @@ namespace Dumber {
 		CleanupStack::PushL(file);
 		file->ConstructL(aFileName, aMode);
 		return file;
+    }
+    
+    TUint64 TDumberFile::Tell() {
+    	TInt ret = 0;
+        iFile.Seek(ESeekCurrent, ret);
+        
+        return ret;
     }
 }

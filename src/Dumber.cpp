@@ -6,8 +6,6 @@
 using namespace Dumber;
 
 void MainL() {
-	TDumberConsole *cons = TDumberConsole::NewLC();
-	
 	_LIT(KRomName, "E:\\SYM.ROM");
 	_LIT(KSuccMsg, "Success dumping the ROM");
 	_LIT(KFailMsg, "Romdump failure.");
@@ -17,6 +15,8 @@ void MainL() {
 	TPtrC FailMsg(KFailMsg);
 	
 	TInt dumbRes = Dumber::DumbROM(RomName);
+	
+	Dumber::TDumberConsole *cons = Dumber::GetConsole();
 	
 	if (dumbRes != KErrNone) {
 		cons->Print(FailMsg);
