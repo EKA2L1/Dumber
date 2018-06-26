@@ -1,0 +1,6 @@
+#{"Dumber"},(0xe084188a),1,0,0
+%{"Vendor-EN"}
+:"bentokun"
+
+; Package file
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\Dumber.exe"		  -"!:\sys\bin\Dumber.exe"

@@ -8,10 +8,10 @@
 
 namespace Dumber {
     enum TDumberOpenMode {
-    	EDumberOpen,
-    	EDumberReplace,
-    	EDumberRead,
-    	EDumberWrite,
+    	EDumberOpen = 0x235495,
+    	EDumberReplace = 0x235140,
+    	EDumberRead = 0x432041,
+    	EDumberWrite= 0x512987,
     	EDumberOpenRead = EDumberOpen | EDumberRead,
     	EDumberOpenWrite = EDumberOpen | EDumberWrite,
     	EDumberReplaceRead = EDumberReplace | EDumberRead,
@@ -36,6 +36,9 @@ namespace Dumber {
         void ConstructL(TDesC &aFileName, const TDumberOpenMode aMode);
         void WriteL(TDesC8 &aData);
         void ReadL(TDes8 &aData);
+        
+        static TDumberFile *NewL(TDesC &aFileName, TDumberOpenMode aMode);
+        static TDumberFile *NewLC(TDesC &aFileName, TDumberOpenMode aMode);
         
         void Seek(const TUint64 aOff, const TDumberSeekMode aMode);
         

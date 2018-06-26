@@ -32,7 +32,7 @@ namespace Dumber {
     		    break;
     		}
 
-    		case EDumberReplaceRead: {
+    		case EDumberReplaceWrite: {
     		    User::LeaveIfError(iFile.Replace(iFs, aFileName, EFileWrite));
     		    break;
     		}
@@ -47,6 +47,7 @@ namespace Dumber {
     void TDumberFile::WriteL(TDesC8 &aData) {
     	if (iOpenMode == EDumberReplaceWrite || iOpenMode == EDumberOpenWrite) {
     		User::LeaveIfError(iFile.Write(aData));
+    		return;
     	}
     	
     	User::Leave(KErrInvalidRequest);
@@ -55,25 +56,28 @@ namespace Dumber {
     void TDumberFile::ReadL(TDes8 &aData) {
     	if (iOpenMode == EDumberReplaceRead || iOpenMode == EDumberOpenRead) {
 			User::LeaveIfError(iFile.Read(aData));
+			return;
 		}
 		
 		User::Leave(KErrInvalidRequest);	
     }
 
-    void TDumberFile::Seek(const TUint64 aOff, const TDumberSeekMode aMode) {
+    void TDumberFile::Seek(const TUint64 aOffset, const TDumberSeekMode aMode) {
+    	TInt off = static_cast<TInt>(aOffset);
+    	
     	switch (aMode) {
     		case EDumberSeekSet: {
-    		    iFile.Seek(ESeekStart, aOff);
+    		    iFile.Seek(ESeekStart, off);
     		    break;
     		}
     		
     		case EDumberSeekCur: {
-    		     iFile.Seek(ESeekCurrent, aOff);
+    		     iFile.Seek(ESeekCurrent, off);
     		     break;
     		}
     		
     		case EDumberSeekEnd: {
-    		     iFile.Seek(ESeekEnd, aOff);
+    		     iFile.Seek(ESeekEnd, off);
     		     break;
     		}
     		
@@ -91,5 +95,21 @@ namespace Dumber {
     	}
     	
     	return 0;
+    }
+
+    TDumberFile *TDumberFile::NewL(TDesC &aFileName, TDumberOpenMode aMode) {
+    	TDumberFile *file = new (ELeave) TDumberFile;
+    	CleanupStack::PushL(file);
+    	file->ConstructL(aFileName, aMode);
+    	CleanupStack::Pop(file);
+    	
+    	return file;
+    }
+    
+    TDumberFile *TDumberFile::NewLC(TDesC &aFileName, TDumberOpenMode aMode) {
+    	TDumberFile *file = new (ELeave) TDumberFile;
+		CleanupStack::PushL(file);
+		file->ConstructL(aFileName, aMode);
+		return file;
     }
 }

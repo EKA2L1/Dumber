@@ -1,7 +1,9 @@
 #ifndef DUMBERBOOTSTRAP_H_
 #define DUMBERBOOTSTRAP_H_
 
-class CTrapCleanup;
+#include <e32std.h>
+
+struct CTrapCleanup;
 
 namespace Dumber {
     TInt Bootstrap();

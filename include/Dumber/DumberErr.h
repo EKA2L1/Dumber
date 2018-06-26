@@ -6,10 +6,10 @@
 /*! \brief When an unknown open mode is given to ConstructL.
  * 
  */
-const TUint KErrUnknownMode = -102;
+const TInt KErrUnknownMode = -102;
 
 /*! \brief Leave when an invalid request is sended.
  */
-const TUint KErrInvalidRequest = -103;
+const TInt KErrInvalidRequest = -103;
 
 #endif

@@ -4,20 +4,24 @@
 #include <e32std.h>
 #include <e32cmn.h>
 #include <e32cons.h>
-#include <e32debug.h>
 
 namespace Dumber {
-    class DumberConsole {
+    class TDumberConsole {
     	CConsoleBase *iConsole;
     	
     public:
-    	DumberConsole();
-    	~DumberConsole();
+    	TDumberConsole();
+    	~TDumberConsole();
     	
     	void ConstructL();
-    	void ConstructLC();
     	
-    	void Print(TDesC16 &aFormat, ...);
+    	static TDumberConsole *NewL();
+    	static TDumberConsole *NewLC();
+    	
+    	void Print(TDesC16 &aFormat);
+    	void Getch();
+    	
+    	CConsoleBase *GetRawHandler() const;
     };
 }
 
