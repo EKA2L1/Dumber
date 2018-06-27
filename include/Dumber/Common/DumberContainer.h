@@ -6,9 +6,9 @@
 #include <e32cmn.h>
 #include <e32base.h>
 #include <e32std.h>
+#include <e32debug.h>
 
 _LIT(KDumberCagetoryLit, "DUMBER");
-TPtrC KDumberCagetory(KDumberCagetoryLit);
 
 namespace Dumber {
     template <typename T>
@@ -25,13 +25,13 @@ namespace Dumber {
     	 */
     	void ReserveL(TUint iNewCap) {
     	    if (iData == NULL) {
-    	    	iData = reinterpret_cast<T*>(User::Alloc(iNewCap * sizeof(T)));
+    	    	iData = reinterpret_cast<T*>(User::AllocZL(iNewCap * sizeof(T)));
     	    	
     	    	if (iData == NULL) {
     	    		User::Leave(KErrNoMemory);
     	    	}
     	    } else {
-    	    	iData = reinterpret_cast<T*>(User::ReAlloc(reinterpret_cast<TAny*>(iData),
+    	    	iData = reinterpret_cast<T*>(User::ReAllocL(reinterpret_cast<TAny*>(iData),
     	    			iNewCap * sizeof(T), 
     	    			2));
     	    	
@@ -50,7 +50,6 @@ namespace Dumber {
     public:
     	TContainer() 
     	    : iData(0), iSize(0), iCap(0) {
-    	
     	}
     	
     	~TContainer() {
@@ -64,11 +63,11 @@ namespace Dumber {
     	} 
     	
     	void PushL(const T aData) {
-    	    if (iSize == iCap) {
-    	    	ReserveL(iCap * 2);
+    		if (iSize == iCap) {
+    	    	ReserveL((iCap + 1) * 2);
     	    }
     	    
-    	    iData[iSize - 1] = aData;
+    	    iData[++iSize - 1] = aData;
     	}
     	
     	void Pop() {
@@ -85,12 +84,17 @@ namespace Dumber {
 	    	iSize = aNewSize;
     	}
     	
-    	T &operator [](TUint aIdx) {
+    	T &At(TUint aIdx) {
     		if (aIdx >= iSize) {
-    		    User::Panic(KDumberCagetory, KDumberOutOfRange);	
-    		}
-    		
-    		return iData[aIdx];
+				TPtrC DumberCage(KDumberCagetoryLit);
+				User::Panic(DumberCage, KDumberOutOfRange);	
+			}
+			
+			return iData[aIdx];
+    	}
+    	
+    	T &operator [](TUint aIdx) {
+    		return At(aIdx);
     	}
     	
     	T *Ptr() const {

@@ -2,21 +2,27 @@
 #include <Dumber/DumberBootstrap.h>
 #include <Dumber/DumberConsole.h>
 #include <Dumber/DumberDumb.h>
+#include <Dumber/DumberBuilder.h>
 
 using namespace Dumber;
 
 void MainL() {
 	_LIT(KRomName, "E:\\SYM.ROM");
-	_LIT(KSuccMsg, "Success dumping the ROM");
-	_LIT(KFailMsg, "Romdump failure.");
+	_LIT(KSuccMsg, "Success dumping the ROM. Press key to exit.\n");
+	_LIT(KFailMsg, "Romdump failure. Press key to exit.\n");
 	
 	TPtrC RomName(KRomName);
 	TPtrC SuccMsg(KSuccMsg);
 	TPtrC FailMsg(KFailMsg);
 	
-	TInt dumbRes = Dumber::DumbROM(RomName);
-	
 	Dumber::TDumberConsole *cons = Dumber::GetConsole();
+	
+	TDumberBuilder builder;
+	builder.ConstructL();
+	
+	TPtrC romName(_L("E:\\SYM.RPKG"));
+	
+	TRAPD(dumbRes, builder.BuildRpkgL(romName));
 	
 	if (dumbRes != KErrNone) {
 		cons->Print(FailMsg);
@@ -25,19 +31,19 @@ void MainL() {
 	   cons->Print(SuccMsg);
 	   cons->Getch();
 	}
-	
-	CleanupStack::PopAndDestroy(cons);
 }
 
 TInt E32Main() {
 	__UHEAP_MARK;
-	TInt res = Bootstrap();
+	Bootstrap();
 	
-	if (res != KErrNone) {
-		return res;
+	TRAPD(err, InitConsoleAppL());
+	
+	if (err) {
+		return err;
 	}
 	
-	TRAPD(err, MainL());
+	TRAP(err, MainL());
 	
 	FreeApp();
 	

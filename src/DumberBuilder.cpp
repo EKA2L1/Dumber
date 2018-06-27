@@ -7,14 +7,14 @@ namespace Dumber {
 	TDumberBuilder::TDumberBuilder() {
 		iFs = Dumber::GetFs();
 		iCons = Dumber::GetConsole();
+		
+		iFileCount = 0;
 	}
 	
 	TDumberBuilder::~TDumberBuilder() {
 	}
 	
 	void TDumberBuilder::ConstructL() {
-		TUint res = iFs->Connect(12);
-		User::LeaveIfError(res);
 	}
 
   	TUint TDumberBuilder::AdjustAddr(TUint aAddr) {
@@ -47,32 +47,60 @@ namespace Dumber {
   		CDir *files;
   		CDir *dirs;
   		
-  		iFs->GetDir(iRoot.iName, KEntryAttMatchMask, ESortByUid, files, dirs);
+  		TInt res = iFs->GetDir(aDir.iLongName, KEntryAttMatchMask, ESortByUid, files, dirs);
+  		
+  		User::LeaveIfError(res);
+  		
+  		RDebug::Print(_L("Parsing directory: %S, dir count: %d, file count: %d"),
+  				&aDir.iLongName, dirs->Count(), files->Count());
+  		
+  		aDir.iDirs.ResizeL(dirs->Count());
+  		aDir.iFiles.ResizeL(files->Count());
   		
   		for (TInt i = 0; i < dirs->Count(); i++) {
-  			TDumberDir subdir;
-  			subdir.iName = (*dirs)[i].iName;
-  			subdir.iAtt = (*dirs)[i].iAtt;
+  			TDumberDir &subdir = aDir.iDirs[i];
   			
-  			aDir.iDirs.PushL(subdir);
-  			BuildDirL(aDir.iDirs.Back());
+  			RDebug::Printf("Attrib: %d", (*dirs)[i].iAtt);
+  			
+  			subdir.iAtt = (*dirs)[i].iAtt;
+  			subdir.iName = (*dirs)[i].iName;
+  			
+  			TPtrC namePtr = subdir.iName.Des();
+  			TPtr longNamePtr = subdir.iLongName.Des();
+  			
+  			longNamePtr.Append(aDir.iLongName);
+  			longNamePtr.Append(namePtr);
+  			longNamePtr.Append('\\');
+  			
+  			BuildDirL(subdir);
   		}
   		
-  		for (TInt i = 0; i < dirs->Count(); i++) {
+  		TUint aLen = 0;
+  		
+  		for (TInt i = 0; i < files->Count(); i++) {
   			if ((*files)[i].iAtt & KEntryAttDir) {
   				continue;
   			}
   			
-  			TDumberEntry initEntry;
+  			TDumberEntry &initEntry = aDir.iFiles[aLen];
   			initEntry.iEntry = (*files)[i];
+
+  			TPtrC namePtr = initEntry.iEntry.iName.Des();
+  			TPtr longNamePtr = initEntry.iLongName.Des();
   			
-  			aDir.iFiles.PushL(initEntry);
+  			iFs->RealName(namePtr, longNamePtr);
+ 
+  			aLen++;
   		}
   	}
   	
   	void TDumberBuilder::BuildRomTreeL() {
-  		_LIT(KRootName, "Z:");
+  		_LIT(KRootName, "Z:\\");
+  		
   		iRoot.iName = TPtrC(KRootName);
+  		iRoot.iLongName = iRoot.iName;
+
+  		iFs->SetSessionPath(iRoot.iName);
   		
   		BuildDirL(iRoot);
   	}
@@ -135,7 +163,7 @@ namespace Dumber {
 		
 		// The Dir should now be found
 	    for (TInt i = curDir.iFiles.Size() -1; i>= 0; i--) {
-	  		TDumberFile *dllFile = TDumberFile::NewL(curDir.iFiles[i].iEntry.iName, EDumberOpenRead);
+	  		TDumberFile *dllFile = TDumberFile::NewL(curDir.iFiles[i].iLongName, EDumberOpenRead);
 	  		
 	  		if (IsXIPL(*dllFile)) {
 	  			delete dllFile;
@@ -179,7 +207,7 @@ namespace Dumber {
   			   continue;
   		   }
   			
-  		   TPtr name = aDir.iFiles[i].iEntry.iName.Des();
+  		   TPtr name = aDir.iFiles[i].iLongName.Des();
   		   TDumberFile *file = TDumberFile::NewL(name, EDumberOpenRead);
   		   
   		   BuildNormalFileL(file, aDir.iFiles[i].iDataPos);
@@ -202,12 +230,14 @@ namespace Dumber {
   	void TDumberBuilder::BuildRomL(TDesC &aName) {
   		iFile = TDumberFile::NewL(aName, EDumberReplaceWrite);
   		
-  		_LIT(KDumberBuildingRomLit, "Building placeholder ROM Header.");
-  		_LIT(KDumberBuildingXipDLLLit, "Building XIP DLLs.");
+  		BuildRomTreeL();
+  		
+  		_LIT(KDumberBuildingRomLit, "Building placeholder ROM Header\n.");
+  		_LIT(KDumberBuildingXipDLLLit, "Building XIP DLLs\n.");
   		
   		TPtrC KDumberBuildingRom(KDumberBuildingRomLit);
   		TPtrC KDumberBuildingXipDLL(KDumberBuildingXipDLLLit);
-  		TPtrC KDumberBuildingNormalFiles(_L("Buidling normal files"));
+  		TPtrC KDumberBuildingNormalFiles(_L("Buidling normal files.\n"));
   		
   		iCons->Print(KDumberBuildingRom);
   		
@@ -222,15 +252,19 @@ namespace Dumber {
   		iCons->Print(KDumberBuildingNormalFiles);
   		BuildNormalFilesL();
   		
-  		TPtrC KDumberWritingFileEntries(_L("Writing file entries."));
+  		TPtrC KDumberWritingFileEntries(_L("Writing file entries.\n"));
   		iCons->Print(KDumberWritingFileEntries);
   		WriteL();
   		
   		BuildRomHeaderL();
+  		
+  		delete iFile;
   	}
 
   	TDumberFile *TDumberBuilder::GetFileL(TEntry &aEntry) {
-  	    return TDumberFile::NewLC(aEntry.iName, EDumberOpenRead);	
+  		TBuf<256> longName;
+  		iFs->RealName(aEntry.iName, longName);
+  	    return TDumberFile::NewLC(longName, EDumberOpenRead);	
   	}
   	
   	TBool TDumberBuilder::IsXIPL(TDumberFile &aFile) {
@@ -329,5 +363,103 @@ namespace Dumber {
   		iFile->WriteL(addrLinearPkg);
   		
   		WriteDir(iRoot);
+  	}
+  	
+  	struct TRpkgEntry {
+  		TUint8 iAtt;
+  		TTime iLastModified;
+  		TUint8 iFullPathLength;
+  	};
+  	
+  	struct TRpkgData {
+  	    TUint iDataSize;	
+  	};
+  	
+  	void TDumberBuilder::BuildRpkgL(CDir *&aDir, TDesC& aDirLongName) {
+  	     for (TInt i = 0; i < aDir->Count(); i++) {
+  	    	 const TEntry &ent = (*aDir)[i];
+             
+			 HBufC16 *LongName = HBufC16::NewL(256);
+			 TPtr aNextLongName = LongName->Des();
+			 aNextLongName.Append(aDirLongName);
+			 aNextLongName.Append(ent.iName);
+			 
+			 RDebug::Print(_L("Path: %S, dir: %d"), &aNextLongName, ent.IsDir());
+			 
+  	    	 if (ent.IsDir()) {	 
+  	    		 CDir *subdir;
+  	    		 aNextLongName.Append('\\');			 
+  	    		 iFs->GetDir(aNextLongName, KEntryAttMatchMask, ESortByUid, subdir);
+  	    		 
+  	    		 BuildRpkgL(subdir, aNextLongName);
+  	    	 } else {
+  	    		 TDumberFile *file;
+  	    		 TRAPD(err, file = TDumberFile::NewL(aNextLongName, EDumberOpenRead));
+  	    		 
+  	    		 if (err != KErrNone) {
+  	    			 continue;
+  	    		 }
+  	    		 
+  	    		 iFileCount++;
+  	    		 
+  	    		 TRpkgEntry entryrpkg;
+  	    		 entryrpkg.iFullPathLength = aNextLongName.Length();
+  	    		 entryrpkg.iLastModified = ent.iModified;
+  	    		 entryrpkg.iAtt = ent.iAtt;
+  	    		 
+  	    		 TPckgC<TRpkgEntry> entryrpkg_pkg(entryrpkg);
+  	    		 iFile->WriteL(entryrpkg_pkg);
+  	    		 iFile->WriteL(aNextLongName);   // Write name
+  	    		 
+  	    		 TRpkgData datarpkg;
+  	    		 datarpkg.iDataSize = file->Size();
+  	    		 
+  	    		 TPckgC<TRpkgData> datarpkg_pkg(datarpkg);
+  	    		 iFile->WriteL(datarpkg_pkg);
+  	    		 
+  	    		 CopyFileL(file);
+  	    		 
+  	    		 delete file;
+  	    	 }
+  	    	 
+  	    	 delete LongName;
+  	     }
+  	}
+  	
+  	struct TRpkgHeader {
+  		TChar iMagic[4];
+  		TVersion iAssociatedRomVersion;
+  		TUint iFileCount;
+  	};
+  	
+  	void TDumberBuilder::BuildRpkgL(TDesC& aDumbName) { 		
+  		iFile = TDumberFile::NewL(aDumbName, EDumberReplaceWrite);
+  		
+  		TRpkgHeader header;
+		header.iMagic[0] = 'R';
+		header.iMagic[1] = 'P';
+		header.iMagic[2] = 'K';
+		header.iMagic[3] = 'G';
+		
+		TPckgC<TRpkgHeader> headerpkg(header);
+		
+		TMachineInfoV1Buf infobuf;
+		UserHal::MachineInfo(infobuf);
+		
+		TMachineInfoV1 machineInfo = infobuf();
+		header.iAssociatedRomVersion = machineInfo.iRomVersion;
+		
+		iFile->WriteL(headerpkg);
+		
+  		CDir *zDir;
+  		iFs->GetDir(_L("Z:\\"), KEntryAttMatchMask, ESortByUid, zDir);
+  		
+  		TPtrC zDirPath(_L("Z:\\"));
+  		BuildRpkgL(zDir, zDirPath);
+  		
+  		iFile->Seek(0, EDumberSeekSet);
+  		
+  		header.iFileCount = iFileCount;
+  		iFile->WriteL(headerpkg);
   	}
 }

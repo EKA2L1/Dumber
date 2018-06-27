@@ -1,6 +1,5 @@
 #include <Dumber/DumberConsole.h>
 #include <e32debug.h>
-#include <stdapis/stdarg.h>
 
 namespace Dumber {
 	TDumberConsole::TDumberConsole()

@@ -14,13 +14,15 @@ RFs gFs;
 namespace Dumber {
     TInt Bootstrap() {
         gCleanup = CTrapCleanup::New();
+        return KErrNone;
+    }
+    
+    void InitConsoleAppL() {
         gSche = new (ELeave) CActiveScheduler();
         CActiveScheduler::Install(gSche);
         gFs.Connect(12);
         
         gConsole = TDumberConsole::NewL();
-        
-        return KErrNone;
     }
     
     void FreeApp() {

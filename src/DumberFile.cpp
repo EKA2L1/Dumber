@@ -3,7 +3,9 @@
 #include <Dumber/DumberBootstrap.h>
 
 namespace Dumber {
-    TDumberFile::TDumberFile() {}
+    TDumberFile::TDumberFile() {
+    	iFs = Dumber::GetFs();
+    }
     
     TDumberFile::~TDumberFile() {
     	iFile.Close();

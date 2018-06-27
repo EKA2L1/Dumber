@@ -20,10 +20,14 @@ namespace Dumber {
     	TUint  iEntryPos;
     	
     	TUint  iSize;
+
+    	TBufC<256> iLongName;
     };
 
     struct TDumberDir {
     	TBufC<256> iName;
+    	TBufC<256> iLongName;
+    	
     	TUint iAtt;
     	
     	TContainer<TDumberEntry> iFiles;
@@ -50,6 +54,7 @@ namespace Dumber {
     	RFs *iFs;
     	
     	TUint iMaxReachedPos;
+    	TUint iFileCount;
     	
     protected:
     	void CopyFileL(TDumberFile *aFile);
@@ -76,6 +81,8 @@ namespace Dumber {
       	void WriteL(TDumberDir &dir);
       	void WriteL();
       	
+      	void BuildRpkgL(CDir *&aDir, TDesC& aDirLongName);
+      	
       	/*! \brief Check if the file is XIP.
       	 */
       	TBool IsXIPL(TDumberFile &aFile);
@@ -88,6 +95,7 @@ namespace Dumber {
       	void ConstructL();
       	
       	void BuildRomL(TDesC &aName);
+      	void BuildRpkgL(TDesC& aDumbName);
     };
 }
 

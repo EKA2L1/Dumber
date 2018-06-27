@@ -10,6 +10,8 @@ namespace Dumber {
 	class TDumberConsole;
 
 	TInt Bootstrap();
+	
+	void InitConsoleAppL();
     void FreeApp();
     
     CTrapCleanup *GetTrapCleanup();
