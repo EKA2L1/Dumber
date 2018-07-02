@@ -34,6 +34,8 @@ namespace Dumber {
 		while (left) {
 			chunkSize = left < KWriteDumbChunkSize ? left : KWriteDumbChunkSize;
 		
+			bufDes.SetLength(chunkSize);
+			
 			aFile->ReadL(bufDes);
 			iFile->WriteL(bufDes);
 			
@@ -366,13 +368,13 @@ namespace Dumber {
   	}
   	
   	struct TRpkgEntry {
-  		TUint8 iAtt;
+  		TUint64 iAtt;
   		TTime iLastModified;
-  		TUint8 iFullPathLength;
+  		TUint64 iFullPathLength;
   	};
   	
   	struct TRpkgData {
-  	    TUint iDataSize;	
+  	    TUint64 iDataSize;	
   	};
   	
   	void TDumberBuilder::BuildRpkgL(CDir *&aDir, TDesC& aDirLongName) {
@@ -384,7 +386,7 @@ namespace Dumber {
 			 aNextLongName.Append(aDirLongName);
 			 aNextLongName.Append(ent.iName);
 			 
-			 RDebug::Print(_L("Path: %S, dir: %d"), &aNextLongName, ent.IsDir());
+			 RDebug::Print(_L("Path: %S, att: %d"), &aNextLongName, ent.iAtt);
 			 
   	    	 if (ent.IsDir()) {	 
   	    		 CDir *subdir;
@@ -397,6 +399,7 @@ namespace Dumber {
   	    		 TRAPD(err, file = TDumberFile::NewL(aNextLongName, EDumberOpenRead));
   	    		 
   	    		 if (err != KErrNone) {
+  	    			 RDebug::Print(_L("Skipping file: %s"), &LongName);
   	    			 continue;
   	    		 }
   	    		 

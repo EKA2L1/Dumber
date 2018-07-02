@@ -16,22 +16,22 @@ namespace Dumber {
    
     	switch (iOpenMode) {
     		case EDumberOpenRead: {
-    		    User::LeaveIfError(iFile.Open(*iFs, aFileName, EFileRead));
+    		    User::LeaveIfError(iFile.Open(*iFs, aFileName, EFileRead | EFileShareReadersOnly));
     		    break;
     		}
     		
     		case EDumberOpenWrite: {
-    		    User::LeaveIfError(iFile.Open(*iFs, aFileName, EFileWrite));
+    		    User::LeaveIfError(iFile.Open(*iFs, aFileName, EFileWrite | EFileShareReadersOrWriters));
     		    break;
     		}
     		
     		case EDumberReplaceRead: {
-    		    User::LeaveIfError(iFile.Replace(*iFs, aFileName, EFileRead));
+    		    User::LeaveIfError(iFile.Replace(*iFs, aFileName, EFileRead | EFileShareReadersOnly));
     		    break;
     		}
 
     		case EDumberReplaceWrite: {
-    		    User::LeaveIfError(iFile.Replace(*iFs, aFileName, EFileWrite));
+    		    User::LeaveIfError(iFile.Replace(*iFs, aFileName, EFileWrite | EFileShareReadersOrWriters));
     		    break;
     		}
     		
@@ -133,9 +133,9 @@ namespace Dumber {
     }
     
     TUint64 TDumberFile::Tell() {
-    	TInt ret = 0;
-        iFile.Seek(ESeekCurrent, ret);
+    	TInt temp = 0;
+        iFile.Seek(ESeekCurrent, temp);
         
-        return ret;
+        return temp;
     }
 }
