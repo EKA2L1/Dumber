@@ -395,7 +395,7 @@ namespace Dumber {
   	    		 
   	    		 BuildRpkgL(subdir, aNextLongName);
   	    	 } else {
-  	    		 TDumberFile *file;
+  	    		 TDumberFile *file = nullptr;
   	    		 TRAPD(err, file = TDumberFile::NewL(aNextLongName, EDumberOpenRead));
   	    		 
   	    		 if (err != KErrNone) {

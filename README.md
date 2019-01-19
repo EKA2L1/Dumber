@@ -3,7 +3,7 @@ Z: drive repackager for Symbian platform, compatible for all Symbian platform.
 
 ## Instructions:
 * Please jailbreak your Symbian phone first. 
-* After that, uses a file manager to gain access to *C:\System\Apps* or *C:\Sys\Bin* and runs **Dumber.exe**
+* After that, open in menu folder "RnD Tools" and run **Dumber**
 * Leave your phone there, if when you come back there is an error message or app exits, that means that there is not enough space or there is a error from the app. Else, a success message will display. Press any key to exit.
 * Your repackage file should be in *E:* drive.
 
