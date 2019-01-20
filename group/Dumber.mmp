@@ -22,3 +22,7 @@ SOURCEPATH ..\src
 USERINCLUDE ..\include
 
 SOURCE DumberFile.cpp Dumber.cpp DumberBootstrap.cpp DumberConsole.cpp DumberDumb.cpp DumberBuilder.cpp
+
+START RESOURCE    Dumber_reg.rss
+TARGETPATH        /private/10003a3f/apps
+END
