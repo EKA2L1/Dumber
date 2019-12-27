@@ -7,16 +7,16 @@
 struct CTrapCleanup;
 
 namespace Dumber {
-	class TDumberConsole;
+class TDumberConsole;
 
-	TInt Bootstrap();
-	
-	void InitConsoleAppL();
-    void FreeApp();
-    
-    CTrapCleanup *GetTrapCleanup();
-    RFs *GetFs();
-    TDumberConsole *GetConsole();
-}
+TInt Bootstrap();
+
+void InitConsoleAppL();
+void FreeApp();
+
+CTrapCleanup* GetTrapCleanup();
+RFs* GetFs();
+TDumberConsole* GetConsole();
+}  // namespace Dumber
 
 #endif
