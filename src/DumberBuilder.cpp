@@ -426,6 +426,8 @@ void TDumberBuilder::BuildRpkgL(CDir*& aDir, TDesC& aDirLongName) {
 
     delete LongName;
   }
+
+  delete aDir;
 }
 
 struct TRpkgHeader {
