@@ -4,7 +4,7 @@
 #include <e32cmn.h>
 
 /*! \brief When an unknown open mode is given to ConstructL.
- * 
+ *
  */
 const TInt KErrUnknownMode = -102;
 

@@ -4,8 +4,8 @@
 #include <e32cmn.h>
 
 namespace Dumber {
-    TInt Dumb(TDesC &aPath, TUint32 aAddress, TUint32 aSize);
-    TInt DumbROM(TDesC &aPath);
-}
+TInt Dumb(TDesC& aPath, TUint32 aAddress, TUint32 aSize);
+TInt DumbROM(TDesC& aPath);
+}  // namespace Dumber
 
 #endif
