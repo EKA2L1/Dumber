@@ -1,5 +1,6 @@
-# Carbide.c++ configs
+# Carbide.c++ generated files
 .cproject
+group/ABLD.BAT
 
 # Prerequisites
 *.d
