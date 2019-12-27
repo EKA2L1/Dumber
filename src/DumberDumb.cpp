@@ -8,14 +8,14 @@ const TInt KWriteChunkSize = 0x10000;
 
 namespace Dumber {
 TInt Dumb(TDesC& aPath, TUint32 aAddress, TUint32 aSize) {
-  TDumberFile* dumber = nullptr;
+  TDumberFile* dumber = NULL;
   TRAPD(err, dumber = TDumberFile::NewL(aPath, EDumberReplaceWrite));
 
   if (err != KErrNone) {
     return err;
   }
 
-  HBufC8* buf = nullptr;
+  HBufC8* buf = NULL;
 
   TRAP(err, buf = HBufC8::NewL(KWriteChunkSize));
 

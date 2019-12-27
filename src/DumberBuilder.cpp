@@ -394,7 +394,7 @@ void TDumberBuilder::BuildRpkgL(CDir*& aDir, TDesC& aDirLongName) {
 
       BuildRpkgL(subdir, aNextLongName);
     } else {
-      TDumberFile* file = nullptr;
+      TDumberFile* file = NULL;
       TRAPD(err, file = TDumberFile::NewL(aNextLongName, EDumberOpenRead));
 
       if (err != KErrNone) {
