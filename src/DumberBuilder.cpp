@@ -380,7 +380,7 @@ void TDumberBuilder::BuildRpkgL(CDir*& aDir, TDesC& aDirLongName) {
   for (TInt i = 0; i < aDir->Count(); i++) {
     const TEntry& ent = (*aDir)[i];
 
-    HBufC16* LongName = HBufC16::NewL(256);
+    HBufC16* LongName = HBufC16::NewL(1024);
     TPtr aNextLongName = LongName->Des();
     aNextLongName.Append(aDirLongName);
     aNextLongName.Append(ent.iName);
