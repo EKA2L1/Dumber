@@ -1,20 +1,27 @@
-#include <Dumber/DumberBootstrap.h>
-#include <Dumber/DumberErr.h>
-#include <Dumber/DumberFile.h>
+#include <DumberErr.h>
+#include <DumberFile.h>
 
 namespace Dumber {
-TDumberFile::TDumberFile() {
-  iFs = Dumber::GetFs();
+TDumberFile::TDumberFile(RFs &aFs)
+  : iFs(&aFs)
+  , iVirtualPos(0)
+  , iMaxReached(0) {
 }
 
 TDumberFile::~TDumberFile() {
   iFile.Close();
 }
 
-void TDumberFile::ConstructL(TDesC& aFileName, const TDumberOpenMode aMode) {
+void TDumberFile::ConstructL(const TDesC& aFileName, const TDumberOpenMode aMode) {
   iOpenMode = aMode;
 
   switch (iOpenMode) {
+    case EDumberEstimate: {
+	  iVirtualPos = 0;
+	  iMaxReached = 0;
+	  break;
+    } 
+  
     case EDumberOpenRead: {
       User::LeaveIfError(
           iFile.Open(*iFs, aFileName, EFileRead | EFileShareReadersOnly));
@@ -47,6 +54,13 @@ void TDumberFile::ConstructL(TDesC& aFileName, const TDumberOpenMode aMode) {
 }
 
 void TDumberFile::WriteL(TDesC8& aData) {
+  if (iOpenMode == EDumberEstimate) {
+    iVirtualPos += aData.Size();
+    iMaxReached = iVirtualPos > iMaxReached ? iVirtualPos : iMaxReached;
+    
+    return;
+  }
+
   if (iOpenMode == EDumberReplaceWrite || iOpenMode == EDumberOpenWrite) {
     User::LeaveIfError(iFile.Write(aData));
     return;
@@ -56,6 +70,13 @@ void TDumberFile::WriteL(TDesC8& aData) {
 }
 
 void TDumberFile::WriteL(TDesC16& aData) {
+  if (iOpenMode == EDumberEstimate) {
+    iVirtualPos += aData.Size();
+    iMaxReached = iVirtualPos > iMaxReached ? iVirtualPos : iMaxReached;
+    
+    return;
+  }
+
   TPtrC8 temp;
   temp.Set(reinterpret_cast<const TUint8*>(aData.Ptr()), aData.Length() * 2);
 
@@ -68,6 +89,13 @@ void TDumberFile::WriteL(TDesC16& aData) {
 }
 
 void TDumberFile::WriteL(const TUint64 aOff, TDesC8& aContent) {
+  if (iOpenMode == EDumberEstimate) {
+    iVirtualPos = aOff + aContent.Length();
+    iMaxReached = iVirtualPos > iMaxReached ? iVirtualPos : iMaxReached;
+    
+    return;
+  }
+ 
   if (iOpenMode == EDumberReplaceWrite || iOpenMode == EDumberOpenWrite) {
     User::LeaveIfError(iFile.Write(aOff, aContent));
     return;
@@ -88,6 +116,25 @@ void TDumberFile::ReadL(TDes8& aData) {
 void TDumberFile::Seek(const TUint64 aOffset, const TDumberSeekMode aMode) {
   TInt off = static_cast<TInt>(aOffset);
 
+  if (iOpenMode == EDumberEstimate) {
+	switch (aMode) {
+	  case EDumberSeekSet:
+	    iVirtualPos = off;
+	    break;
+	    
+	  case EDumberSeekCur:
+		iVirtualPos += off;
+		break;
+		
+	  case EDumberSeekEnd:
+	  	iVirtualPos = iMaxReached + off;
+	  	break;
+	}
+	
+    if (iVirtualPos > iMaxReached) iMaxReached = off;
+    return;
+  }
+  
   switch (aMode) {
     case EDumberSeekSet: {
       iFile.Seek(ESeekStart, off);
@@ -110,6 +157,9 @@ void TDumberFile::Seek(const TUint64 aOffset, const TDumberSeekMode aMode) {
 }
 
 TUint64 TDumberFile::Size() const {
+  if (iOpenMode == EDumberEstimate)
+    return iMaxReached;
+
   TInt lSize = 0;
   TInt lErr = iFile.Size(lSize);
 
@@ -120,8 +170,8 @@ TUint64 TDumberFile::Size() const {
   return 0;
 }
 
-TDumberFile* TDumberFile::NewL(TDesC& aFileName, TDumberOpenMode aMode) {
-  TDumberFile* file = new (ELeave) TDumberFile;
+TDumberFile* TDumberFile::NewL(RFs &aFs, const TDesC& aFileName, TDumberOpenMode aMode) {
+  TDumberFile* file = new (ELeave) TDumberFile(aFs);
   CleanupStack::PushL(file);
   file->ConstructL(aFileName, aMode);
   CleanupStack::Pop(file);
@@ -129,8 +179,8 @@ TDumberFile* TDumberFile::NewL(TDesC& aFileName, TDumberOpenMode aMode) {
   return file;
 }
 
-TDumberFile* TDumberFile::NewLC(TDesC& aFileName, TDumberOpenMode aMode) {
-  TDumberFile* file = new (ELeave) TDumberFile;
+TDumberFile* TDumberFile::NewLC(RFs &aFs, const TDesC& aFileName, TDumberOpenMode aMode) {
+  TDumberFile* file = new (ELeave) TDumberFile(aFs);
   CleanupStack::PushL(file);
   file->ConstructL(aFileName, aMode);
   return file;

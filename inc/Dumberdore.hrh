@@ -1,0 +1,24 @@
+/*
+ ============================================================================
+ Name		: Dumberdore.hrh
+ Author	  : EKA2L1
+ Copyright   : (C) 2020 EKA2L1 Project
+ Description : This file contains declarations for constants of Dumberdore.
+ The file can be included in C++ or resource file.
+ ============================================================================
+ */
+#ifndef __DUMBERDORE_HRH__
+#define __DUMBERDORE_HRH__
+
+#define _UID3 0xe3ca2de5
+
+// Dumberdore enumerate command codes
+enum TDumberdoreIds
+	{
+	EDumpRPKG = 0x6001, // start value must not be 0
+	EAbout,
+	EProgressNoteId,
+	EInformationNoteId
+	};
+
+#endif // __DUMBERDORE_HRH__

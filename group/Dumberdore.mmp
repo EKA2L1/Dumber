@@ -1,0 +1,62 @@
+/*
+============================================================================
+ Name		: Dumberdore.mmp
+ Author	  : EKA2L1
+ Copyright   : (C) 2020 EKA2L1 Project
+ Description : This is the project specification file for Dumberdore.
+============================================================================
+*/
+
+MACRO _HELP_AVAILABLE_
+
+TARGET			Dumberdore_0xe3ca2de5.exe
+TARGETTYPE		exe
+UID		  0x100039CE 0xe3ca2de5
+
+SOURCEPATH		..\src
+SOURCE			Dumberdore.cpp
+SOURCE			DumberdoreApplication.cpp
+SOURCE			DumberdoreAppView.cpp
+SOURCE			DumberdoreAppUi.cpp
+SOURCE			DumberdoreDocument.cpp
+
+SOURCEPATH		..\data
+
+START RESOURCE	Dumberdore.rss
+HEADER
+TARGET Dumberdore_0xe3ca2de5
+TARGETPATH resource\apps
+END //RESOURCE
+
+START RESOURCE	Dumberdore_reg.rss
+TARGET Dumberdore_0xe3ca2de5_reg
+TARGETPATH 	  \private\10003a3f\apps
+END //RESOURCE
+
+USERINCLUDE	   ..\inc
+
+SYSTEMINCLUDE	 /epoc32/include
+
+LIBRARY		   euser.lib
+LIBRARY		   apparc.lib
+LIBRARY		   cone.lib
+LIBRARY		   eikcore.lib
+LIBRARY		   avkon.lib
+LIBRARY		   commonengine.lib
+LIBRARY		   efsrv.lib 
+LIBRARY		   estor.lib
+LIBRARY        aknnotify.lib
+LIBRARY        hlplch.lib commondialogs.lib platformenv.lib eikctl.lib
+ 
+
+LANG SC
+
+VENDORID	  	  0
+SECUREID		  0xe3ca2de5
+CAPABILITY	  	  ReadUserData 
+
+DEBUGGABLE_UDEBONLY
+// End of File
+SOURCEPATH ..\src
+SOURCE DumberFile.cpp DumberDumb.cpp
+EPOCSTACKSIZE 0x5000

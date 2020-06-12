@@ -1,15 +1,39 @@
 /*
 ============================================================================
  Name		: bld.inf
- Author	  : bentokun
- Copyright   : Copyright 2018 Bentokun
+ Author	  : EKA2L1
+ Copyright   : (C) 2020 EKA2L1 Project
  Description : This file provides the information required for building the
-				whole of a Dumber.
+				whole of a Dumberdore.
 ============================================================================
 */
 
 PRJ_PLATFORMS
-DEFAULT
+WINSCW ARMV5 GCCE
+
+
+#ifdef SBSV2
+
+PRJ_EXTENSIONS
+	
+	START EXTENSION s60/mifconv
+	OPTION TARGETFILE dumberdore_0xe3ca2de5.mif
+	OPTION HEADERFILE dumberdore_0xe3ca2de5.mbg
+	OPTION SOURCEDIR ../gfx
+	OPTION SOURCES -c32 qgn_menu_Dumberdore
+	END
+	END
+
+#else
 
 PRJ_MMPFILES
-Dumber.mmp
+
+	gnumakefile icons_scalable_dc.mk
+
+	// help compiler is not always available; see similar comment in *.pkg file
+
+#endif
+
+PRJ_MMPFILES
+
+Dumberdore.mmp

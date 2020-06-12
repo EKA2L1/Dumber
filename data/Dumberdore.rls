@@ -1,0 +1,45 @@
+/*
+============================================================================
+ Name		: Dumberdore.rls
+ Author	  : EKA2L1
+ Copyright   : (C) 2020 EKA2L1 Project
+ Description : This is a localisation file for Dumberdore
+				A .rls file is the one and only place where the logical
+				strings to be localised are defined. 
+============================================================================
+*/
+
+//  LOCALISATION STRINGS
+
+// Caption string for app.
+#define qtn_caption_string "Dumberdore"
+
+// First item in "Options" menu pane
+#define qtn_dump_rpkg "Dump RPKG"
+
+#define qtn_about "About"
+
+// Third item in "Options" menu pane
+#define qtn_exit "Exit"
+
+#define qtn_loc_resource_file_1 "\\resource\\apps\\Dumberdore_0xe3ca2de5"
+
+#define qtn_about_dialog_title "About"
+
+#define qtn_about_dialog_text "(c) 2020 EKA2L1 Project\nContact EKA2L1 Team on Discord for support."
+
+#define qtn_dump_estimate_dialog_text "Calculate dump size"
+
+#define qtn_dump_in_process_dialog_text "Dumping the data"
+
+#define qtn_dump_not_enough_space_dialog_text "Choosen drive does not have enough space for the dump. You need at least %d MB free."
+
+#define qtn_dump_error_encoutered_dialog_text "Dump failure with error code: %d!"
+
+#define qtn_dump_create_thread_error_dialog_text "Error encountered while creating the dump thread! (error code: %d)"
+
+#define qtn_dump_done_dialog_text "File dumped as SYM.RPKG!"
+
+#define qtn_dump_cancelled_dialog_text "Dump cancelled!"
+
+// End of File

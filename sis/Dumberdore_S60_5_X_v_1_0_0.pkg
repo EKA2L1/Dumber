@@ -1,0 +1,36 @@
+; Installation file for Dumberdore application
+;
+; This is an auto-generated PKG file by Carbide.
+; This file uses variables specific to Carbide builds that will not work
+; on command-line builds. If you want to use this generated PKG file from the
+; command-line tools you will need to modify the variables with the appropriate
+; values: $(EPOCROOT), $(PLATFORM), $(TARGET)
+;
+;Language - standard language definitions
+&EN
+
+; standard SIS file header
+#{"Dumberdore"},(0xe3ca2de5),1,0,0
+
+;Localised Vendor name
+%{"Vendor-EN"}
+
+;Unique Vendor name
+:"Vendor"
+
+;Supports Series 60 v 5.0
+[0x101F7961], 0, 0, 0, {"Series60ProductID"}
+
+;Files to install
+;You should change the source paths to match that of your environment
+;<source> <destination>
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\Dumberdore_0xe3ca2de5.exe"		-"!:\sys\bin\Dumberdore_0xe3ca2de5.exe"
+"$(EPOCROOT)epoc32\data\z\resource\apps\dumberdore_0xe3ca2de5.rsc"		-"!:\resource\apps\Dumberdore_0xe3ca2de5.rsc"
+"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\dumberdore_0xe3ca2de5_reg.rsc"	-"!:\private\10003a3f\import\apps\Dumberdore_0xe3ca2de5_reg.rsc"
+"$(EPOCROOT)epoc32\data\z\resource\apps\dumberdore_0xe3ca2de5.mif" -"!:\resource\apps\Dumberdore_0xe3ca2de5.mif"
+
+; Add any installation notes if applicable
+;"Dumberdore.txt"		-"!:\private\e3ca2de5\Dumberdore.txt"
+
+;required for application to be covered by backup/restore facility 
+"..\sis\backup_registration.xml"		-"!:\private\e3ca2de5\backup_registration.xml"
