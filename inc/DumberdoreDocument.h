@@ -24,68 +24,66 @@ class CEikApplication;
  * An instance of class CDumberdoreDocument is the Document part of the
  * AVKON application framework for the Dumberdore example application.
  */
-class CDumberdoreDocument : public CAknDocument
-	{
+class CDumberdoreDocument : public CAknDocument {
 public:
-	// Constructors and destructor
+  // Constructors and destructor
 
-	/**
-	 * NewL.
-	 * Two-phased constructor.
-	 * Construct a CDumberdoreDocument for the AVKON application aApp
-	 * using two phase construction, and return a pointer
-	 * to the created object.
-	 * @param aApp Application creating this document.
-	 * @return A pointer to the created instance of CDumberdoreDocument.
-	 */
-	static CDumberdoreDocument* NewL(CEikApplication& aApp);
+  /**
+   * NewL.
+   * Two-phased constructor.
+   * Construct a CDumberdoreDocument for the AVKON application aApp
+   * using two phase construction, and return a pointer
+   * to the created object.
+   * @param aApp Application creating this document.
+   * @return A pointer to the created instance of CDumberdoreDocument.
+   */
+  static CDumberdoreDocument *NewL(CEikApplication &aApp);
 
-	/**
-	 * NewLC.
-	 * Two-phased constructor.
-	 * Construct a CDumberdoreDocument for the AVKON application aApp
-	 * using two phase construction, and return a pointer
-	 * to the created object.
-	 * @param aApp Application creating this document.
-	 * @return A pointer to the created instance of CDumberdoreDocument.
-	 */
-	static CDumberdoreDocument* NewLC(CEikApplication& aApp);
+  /**
+   * NewLC.
+   * Two-phased constructor.
+   * Construct a CDumberdoreDocument for the AVKON application aApp
+   * using two phase construction, and return a pointer
+   * to the created object.
+   * @param aApp Application creating this document.
+   * @return A pointer to the created instance of CDumberdoreDocument.
+   */
+  static CDumberdoreDocument *NewLC(CEikApplication &aApp);
 
-	/**
-	 * ~CDumberdoreDocument
-	 * Virtual Destructor.
-	 */
-	virtual ~CDumberdoreDocument();
+  /**
+   * ~CDumberdoreDocument
+   * Virtual Destructor.
+   */
+  virtual ~CDumberdoreDocument();
 
 public:
-	// Functions from base classes
+  // Functions from base classes
 
-	/**
-	 * CreateAppUiL
-	 * From CEikDocument, CreateAppUiL.
-	 * Create a CDumberdoreAppUi object and return a pointer to it.
-	 * The object returned is owned by the Uikon framework.
-	 * @return Pointer to created instance of AppUi.
-	 */
-	CEikAppUi* CreateAppUiL();
+  /**
+   * CreateAppUiL
+   * From CEikDocument, CreateAppUiL.
+   * Create a CDumberdoreAppUi object and return a pointer to it.
+   * The object returned is owned by the Uikon framework.
+   * @return Pointer to created instance of AppUi.
+   */
+  CEikAppUi *CreateAppUiL();
 
 private:
-	// Constructors
+  // Constructors
 
-	/**
-	 * ConstructL
-	 * 2nd phase constructor.
-	 */
-	void ConstructL();
+  /**
+   * ConstructL
+   * 2nd phase constructor.
+   */
+  void ConstructL();
 
-	/**
-	 * CDumberdoreDocument.
-	 * C++ default constructor.
-	 * @param aApp Application creating this document.
-	 */
-	CDumberdoreDocument(CEikApplication& aApp);
-
-	};
+  /**
+   * CDumberdoreDocument.
+   * C++ default constructor.
+   * @param aApp Application creating this document.
+   */
+  CDumberdoreDocument(CEikApplication &aApp);
+};
 
 #endif // __DUMBERDOREDOCUMENT_h__
 // End of File

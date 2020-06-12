@@ -8,16 +8,9 @@
  */
 
 // INCLUDE FILES
-#include <eikstart.h>
 #include "DumberdoreApplication.h"
+#include <eikstart.h>
 
-LOCAL_C CApaApplication* NewApplication()
-	{
-	return new CDumberdoreApplication;
-	}
+LOCAL_C CApaApplication *NewApplication() { return new CDumberdoreApplication; }
 
-GLDEF_C TInt E32Main()
-	{
-	return EikStart::RunApplication(NewApplication);
-	}
-
+GLDEF_C TInt E32Main() { return EikStart::RunApplication(NewApplication); }

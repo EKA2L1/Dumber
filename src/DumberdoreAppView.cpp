@@ -8,8 +8,8 @@
  */
 
 // INCLUDE FILES
-#include <coemain.h>
 #include "DumberdoreAppView.h"
+#include <coemain.h>
 
 // ============================ MEMBER FUNCTIONS ===============================
 
@@ -18,103 +18,93 @@
 // Two-phased constructor.
 // -----------------------------------------------------------------------------
 //
-CDumberdoreAppView* CDumberdoreAppView::NewL(const TRect& aRect)
-	{
-	CDumberdoreAppView* self = CDumberdoreAppView::NewLC(aRect);
-	CleanupStack::Pop(self);
-	return self;
-	}
+CDumberdoreAppView *CDumberdoreAppView::NewL(const TRect &aRect) {
+  CDumberdoreAppView *self = CDumberdoreAppView::NewLC(aRect);
+  CleanupStack::Pop(self);
+  return self;
+}
 
 // -----------------------------------------------------------------------------
 // CDumberdoreAppView::NewLC()
 // Two-phased constructor.
 // -----------------------------------------------------------------------------
 //
-CDumberdoreAppView* CDumberdoreAppView::NewLC(const TRect& aRect)
-	{
-	CDumberdoreAppView* self = new (ELeave) CDumberdoreAppView;
-	CleanupStack::PushL(self);
-	self->ConstructL(aRect);
-	return self;
-	}
+CDumberdoreAppView *CDumberdoreAppView::NewLC(const TRect &aRect) {
+  CDumberdoreAppView *self = new (ELeave) CDumberdoreAppView;
+  CleanupStack::PushL(self);
+  self->ConstructL(aRect);
+  return self;
+}
 
 // -----------------------------------------------------------------------------
 // CDumberdoreAppView::ConstructL()
 // Symbian 2nd phase constructor can leave.
 // -----------------------------------------------------------------------------
 //
-void CDumberdoreAppView::ConstructL(const TRect& aRect)
-	{
-	// Create a window for this application view
-	CreateWindowL();
+void CDumberdoreAppView::ConstructL(const TRect &aRect) {
+  // Create a window for this application view
+  CreateWindowL();
 
-	// Set the windows size
-	SetRect(aRect);
+  // Set the windows size
+  SetRect(aRect);
 
-	// Activate the window, which makes it ready to be drawn
-	ActivateL();
-	}
+  // Activate the window, which makes it ready to be drawn
+  ActivateL();
+}
 
 // -----------------------------------------------------------------------------
 // CDumberdoreAppView::CDumberdoreAppView()
 // C++ default constructor can NOT contain any code, that might leave.
 // -----------------------------------------------------------------------------
 //
-CDumberdoreAppView::CDumberdoreAppView()
-	{
-	// No implementation required
-	}
+CDumberdoreAppView::CDumberdoreAppView() {
+  // No implementation required
+}
 
 // -----------------------------------------------------------------------------
 // CDumberdoreAppView::~CDumberdoreAppView()
 // Destructor.
 // -----------------------------------------------------------------------------
 //
-CDumberdoreAppView::~CDumberdoreAppView()
-	{
-	// No implementation required
-	}
+CDumberdoreAppView::~CDumberdoreAppView() {
+  // No implementation required
+}
 
 // -----------------------------------------------------------------------------
 // CDumberdoreAppView::Draw()
 // Draws the display.
 // -----------------------------------------------------------------------------
 //
-void CDumberdoreAppView::Draw(const TRect& /*aRect*/) const
-	{
-	// Get the standard graphics context
-	CWindowGc& gc = SystemGc();
+void CDumberdoreAppView::Draw(const TRect & /*aRect*/) const {
+  // Get the standard graphics context
+  CWindowGc &gc = SystemGc();
 
-	// Gets the control's extent
-	TRect drawRect(Rect());
+  // Gets the control's extent
+  TRect drawRect(Rect());
 
-	// Clears the screen
-	gc.Clear(drawRect);
-
-	}
+  // Clears the screen
+  gc.Clear(drawRect);
+}
 
 // -----------------------------------------------------------------------------
 // CDumberdoreAppView::SizeChanged()
 // Called by framework when the view size is changed.
 // -----------------------------------------------------------------------------
 //
-void CDumberdoreAppView::SizeChanged()
-	{
-	DrawNow();
-	}
+void CDumberdoreAppView::SizeChanged() { DrawNow(); }
 
 // -----------------------------------------------------------------------------
 // CDumberdoreAppView::HandlePointerEventL()
 // Called by framework to handle pointer touch events.
-// Note: although this method is compatible with earlier SDKs, 
+// Note: although this method is compatible with earlier SDKs,
 // it will not be called in SDKs without Touch support.
 // -----------------------------------------------------------------------------
 //
-void CDumberdoreAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
-	{
+void CDumberdoreAppView::HandlePointerEventL(
+    const TPointerEvent &aPointerEvent) {
 
-	// Call base class HandlePointerEventL()
-	CCoeControl::HandlePointerEventL(aPointerEvent);
-	}
+  // Call base class HandlePointerEventL()
+  CCoeControl::HandlePointerEventL(aPointerEvent);
+}
 
 // End of File
