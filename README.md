@@ -3,19 +3,19 @@ Z: drive repackager for Symbian platform, compatible for all Symbian platform.
 
 ## Instructions:
 * Please jailbreak your Symbian phone first. 
-* After that, open in menu folder "RnD Tools" and run **Dumber**
-* Leave your phone there, if when you come back there is an error message or app exits, that means that there is not enough space or there is a error from the app. Else, a success message will display. Press any key to exit.
-* Your repackage file should be in *E:* drive.
+* After that, open Dumberdore in your menu, and choose "Dump RPKG" in Options menu.
 
 ## Specification:
 * EKA2L1 uses the RPKG format to package all *Z:* drive contents. Z: drive should have at least ROM (on previous platform), or is mounted with both *ROFS + ROM*. All contents are repackage to a single file without any compression. All entries should be sort by UID.
 * Header
-   - Magic: char[4] (RPKG)
+   - Magic: char[4] (RPKG or RPK2 for 2nd version)
    - Version: 
       + Major: char
       + Minor: char
       + Build: short
    - File count: uint32_t
+   - Header size (RPKG 2nd version): uint32_t
+   - Machine UID (RPKG 2nd version): uint32_t
 * Entry sections: *File count* * entries
    - Entry:
       + Attribute: Uint64_t
