@@ -7,19 +7,19 @@
 const TInt KWriteChunkSize = 0x10000;
 
 namespace Dumber {
-TInt Dumb(TDesC &aPath, TUint32 aAddress, TUint32 aSize, TInt &aProgress) {
+TInt Dumb(TDesC& aPath, TUint32 aAddress, TUint32 aSize, TInt &aProgress) {
   RFs fs;
   fs.Connect(-1);
 
-  TDumberFile *dumber = NULL;
+  TDumberFile* dumber = NULL;
   TRAPD(err, dumber = TDumberFile::NewL(fs, aPath, EDumberReplaceWrite));
 
   if (err != KErrNone) {
-    fs.Close();
+	fs.Close();
     return err;
   }
 
-  HBufC8 *buf = NULL;
+  HBufC8* buf = NULL;
 
   TRAP(err, buf = HBufC8::NewL(KWriteChunkSize));
 
@@ -39,13 +39,13 @@ TInt Dumb(TDesC &aPath, TUint32 aAddress, TUint32 aSize, TInt &aProgress) {
   while (left) {
     chunkSize = left < KWriteChunkSize ? left : KWriteChunkSize;
 
-    bufDes.Copy((const TUint8 *)(aAddress), chunkSize);
+    bufDes.Copy((const TUint8*)(aAddress), chunkSize);
     TRAP(err, dumber->WriteL(bufDes));
 
     if (err) {
       RDebug::Printf("Error!");
       fs.Close();
-
+      
       delete dumber;
       delete buf;
       return err;
@@ -53,20 +53,20 @@ TInt Dumb(TDesC &aPath, TUint32 aAddress, TUint32 aSize, TInt &aProgress) {
 
     aAddress += chunkSize;
     left -= chunkSize;
-
+    
     aProgress = 100 - (left * 100 / originalSize);
   }
 
   delete dumber;
   delete buf;
-
+  
   fs.Close();
   return KErrNone;
 }
 
-TInt DumbROM(TDesC &aPath, TInt &aProgress) {
+TInt DumbROM(TDesC& aPath, TInt &aProgress) {
   TUint addr = UserSvr::RomHeaderAddress();
-  TRomHeader *aHeader = (TRomHeader *)(addr);
+  TRomHeader* aHeader = (TRomHeader*)(addr);
 
   TUint size = aHeader->iRomSize - 0xA1000;
 
@@ -93,8 +93,8 @@ struct TRpkgData {
 
 const TInt KWriteDumbChunkSize = 0x10000;
 
-static void CopyFileL(TDumberFile *aFile, TDumberFile *aDestFile) {
-  HBufC8 *buf = HBufC8::NewL(KWriteDumbChunkSize);
+static void CopyFileL(TDumberFile* aFile, TDumberFile *aDestFile) {
+  HBufC8* buf = HBufC8::NewL(KWriteDumbChunkSize);
 
   TPtr8 bufDes(buf->Des());
 
@@ -115,34 +115,30 @@ static void CopyFileL(TDumberFile *aFile, TDumberFile *aDestFile) {
   delete buf;
 }
 
-static void BuildRpkgL(CDir *&aDir, RFs *aFs, TDumberFile *aDestFile,
-                       TDesC &aDirLongName, TUint &aFileCount, TInt64 &aCopied,
-                       TBool &aShouldStop) {
+static void BuildRpkgL(CDir*& aDir, RFs *aFs, TDumberFile *aDestFile, TDesC& aDirLongName, TUint &aFileCount, TInt64 &aCopied, TBool &aShouldStop) {
   for (TInt i = 0; i < aDir->Count(); i++) {
-    if (aShouldStop) {
-      break;
-    }
+	if (aShouldStop) {
+		break;
+	}
 
-    const TEntry &ent = (*aDir)[i];
+    const TEntry& ent = (*aDir)[i];
 
-    HBufC16 *LongName = HBufC16::NewL(1024);
+    HBufC16* LongName = HBufC16::NewL(1024);
     TPtr aNextLongName = LongName->Des();
     aNextLongName.Append(aDirLongName);
     aNextLongName.Append(ent.iName);
 
-    // RDebug::Print(_L("Path: %S, att: %d"), &aNextLongName, ent.iAtt);
+    //RDebug::Print(_L("Path: %S, att: %d"), &aNextLongName, ent.iAtt);
 
     if (ent.IsDir()) {
-      CDir *subdir;
+      CDir* subdir;
       aNextLongName.Append('\\');
       aFs->GetDir(aNextLongName, KEntryAttMatchMask, ESortByUid, subdir);
 
-      BuildRpkgL(subdir, aFs, aDestFile, aNextLongName, aFileCount, aCopied,
-                 aShouldStop);
+      BuildRpkgL(subdir, aFs, aDestFile, aNextLongName, aFileCount, aCopied, aShouldStop);
     } else {
-      TDumberFile *file = NULL;
-      TRAPD(err,
-            file = TDumberFile::NewL(*aFs, aNextLongName, EDumberOpenRead));
+      TDumberFile* file = NULL;
+      TRAPD(err, file = TDumberFile::NewL(*aFs, aNextLongName, EDumberOpenRead));
 
       if (err != KErrNone) {
         RDebug::Print(_L("Skipping file: %s"), &LongName);
@@ -158,7 +154,7 @@ static void BuildRpkgL(CDir *&aDir, RFs *aFs, TDumberFile *aDestFile,
 
       TPckgC<TRpkgEntry> entryrpkg_pkg(entryrpkg);
       aDestFile->WriteL(entryrpkg_pkg);
-      aDestFile->WriteL(aNextLongName); // Write name
+      aDestFile->WriteL(aNextLongName);  // Write name
 
       TRpkgData datarpkg;
       datarpkg.iDataSize = file->Size();
@@ -178,13 +174,11 @@ static void BuildRpkgL(CDir *&aDir, RFs *aFs, TDumberFile *aDestFile,
   delete aDir;
 }
 
-TInt BuildRpkgL(const TDesC &aDumbName, TInt64 &aProgress, TBool &aShouldStop,
-                TUint8 aEstimate) {
+TInt BuildRpkgL(const TDesC& aDumbName, TInt64 &aProgress, TBool &aShouldStop, TUint8 aEstimate) {
   RFs fs;
   fs.Connect(-1);
 
-  TDumberFile *iFile = TDumberFile::NewL(
-      fs, aDumbName, aEstimate ? EDumberEstimate : EDumberReplaceWrite);
+  TDumberFile *iFile = TDumberFile::NewL(fs, aDumbName, aEstimate ? EDumberEstimate : EDumberReplaceWrite);
   CleanupStack::PushL(iFile);
 
   TRpkgHeader header;
@@ -206,18 +200,17 @@ TInt BuildRpkgL(const TDesC &aDumbName, TInt64 &aProgress, TBool &aShouldStop,
 
   iFile->WriteL(headerpkg);
 
-  CDir *zDir;
+  CDir* zDir;
   fs.GetDir(_L("Z:\\"), KEntryAttMatchMask, ESortByUid, zDir);
-
+  
   TPtrC zDirPath(_L("Z:\\"));
-  BuildRpkgL(zDir, &fs, iFile, zDirPath, header.iFileCount, aProgress,
-             aShouldStop);
+  BuildRpkgL(zDir, &fs, iFile, zDirPath, header.iFileCount, aProgress, aShouldStop);
 
   iFile->Seek(0, EDumberSeekSet);
   iFile->WriteL(headerpkg);
-
-  CleanupStack::PopAndDestroy(); // iFile
-
+  
+  CleanupStack::PopAndDestroy();  // iFile
+  
   return KErrNone;
 }
-} // namespace Dumber
+}  // namespace Dumber

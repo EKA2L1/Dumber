@@ -8,9 +8,9 @@
  */
 
 // INCLUDE FILES
-#include "DumberdoreApplication.h"
 #include "Dumberdore.hrh"
 #include "DumberdoreDocument.h"
+#include "DumberdoreApplication.h"
 
 // ============================ MEMBER FUNCTIONS ===============================
 
@@ -19,19 +19,21 @@
 // Creates CApaDocument object
 // -----------------------------------------------------------------------------
 //
-CApaDocument *CDumberdoreApplication::CreateDocumentL() {
-  // Create an Dumberdore document, and return a pointer to it
-  return CDumberdoreDocument::NewL(*this);
-}
+CApaDocument* CDumberdoreApplication::CreateDocumentL()
+	{
+	// Create an Dumberdore document, and return a pointer to it
+	return CDumberdoreDocument::NewL(*this);
+	}
 
 // -----------------------------------------------------------------------------
 // CDumberdoreApplication::AppDllUid()
 // Returns application UID
 // -----------------------------------------------------------------------------
 //
-TUid CDumberdoreApplication::AppDllUid() const {
-  // Return the UID for the Dumberdore application
-  return KUidDumberdoreApp;
-}
+TUid CDumberdoreApplication::AppDllUid() const
+	{
+	// Return the UID for the Dumberdore application
+	return KUidDumberdoreApp;
+	}
 
 // End of File

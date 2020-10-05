@@ -34,7 +34,7 @@
 
 #define qtn_dump_not_enough_space_dialog_text "Choosen drive does not have enough space for the dump. You need at least %d MB free."
 
-#define qtn_dump_error_encoutered_dialog_text "Dump failure with error code: %d!"
+#define qtn_dump_error_encoutered_dialog_text "Dump failure with error code: %d (category %S)!"
 
 #define qtn_dump_create_thread_error_dialog_text "Error encountered while creating the dump thread! (error code: %d)"
 

@@ -11,8 +11,8 @@
 #define __DUMBERDOREAPPUI_h__
 
 // INCLUDES
-#include <AknProgressDialog.h>
 #include <aknappui.h>
+#include <AknProgressDialog.h>
 
 // FORWARD DECLARATIONS
 class CDumberdoreAppView;
@@ -30,90 +30,92 @@ struct TDumberRPKGThreadData {
  * Interacts with the user through the UI and request message processing
  * from the handler class
  */
-class CDumberdoreAppUi : public CAknAppUi, public MProgressDialogCallback {
+class CDumberdoreAppUi : public CAknAppUi, public MProgressDialogCallback
+	{
 public:
-  // Constructors and destructor
+	// Constructors and destructor
 
-  /**
-   * ConstructL.
-   * 2nd phase constructor.
-   */
-  void ConstructL();
+	/**
+	 * ConstructL.
+	 * 2nd phase constructor.
+	 */
+	void ConstructL();
 
-  /**
-   * CDumberdoreAppUi.
-   * C++ default constructor. This needs to be public due to
-   * the way the framework constructs the AppUi
-   */
-  CDumberdoreAppUi();
+	/**
+	 * CDumberdoreAppUi.
+	 * C++ default constructor. This needs to be public due to
+	 * the way the framework constructs the AppUi
+	 */
+	CDumberdoreAppUi();
 
-  /**
-   * ~CDumberdoreAppUi.
-   * Virtual Destructor.
-   */
-  virtual ~CDumberdoreAppUi();
-
-  virtual void DialogDismissedL(TInt aButtonId);
-
-  bool UpdateProgressBar();
-
-private:
-  void PullOffErrorFromProgressUpdate(const TDesC &aErr);
-
-  // Functions from base classes
-
-  /**
-   * From CEikAppUi, HandleCommandL.
-   * Takes care of command handling.
-   * @param aCommand Command to be handled.
-   */
-  void HandleCommandL(TInt aCommand);
-
-  /**
-   *  HandleStatusPaneSizeChange.
-   *  Called by the framework when the application status pane
-   *  size is changed.
-   */
-  void HandleStatusPaneSizeChange();
-
-  /**
-   *  From CCoeAppUi, HelpContextL.
-   *  Provides help context for the application.
-   *  size is changed.
-   */
-  CArrayFix<TCoeHelpContext> *HelpContextL() const;
+	/**
+	 * ~CDumberdoreAppUi.
+	 * Virtual Destructor.
+	 */
+	virtual ~CDumberdoreAppUi();
+	
+	virtual void DialogDismissedL (TInt aButtonId);
+	
+	bool UpdateProgressBar();
 
 private:
-  /**
-   * @brief Handle the dump RPKG command.
-   */
-  void HandleDumpRPKG();
+	void PullOffErrorFromProgressUpdate(const TDesC &aErr);
+	
+	// Functions from base classes
 
-  /**
-   * @biref Handle the about command.
-   */
-  void HandleAbout();
+	/**
+	 * From CEikAppUi, HandleCommandL.
+	 * Takes care of command handling.
+	 * @param aCommand Command to be handled.
+	 */
+	void HandleCommandL(TInt aCommand);
 
-  // Data
+	/**
+	 *  HandleStatusPaneSizeChange.
+	 *  Called by the framework when the application status pane
+	 *  size is changed.
+	 */
+	void HandleStatusPaneSizeChange();
 
-  /**
-   * The application view
-   * Owned by CDumberdoreAppUi
-   */
-  CDumberdoreAppView *iAppView;
+	/**
+	 *  From CCoeAppUi, HelpContextL.
+	 *  Provides help context for the application.
+	 *  size is changed.
+	 */
+	CArrayFix<TCoeHelpContext>* HelpContextL() const;
 
-  CAknProgressDialog *iProgressDialog;
+private:
+	
+	/**
+	 * @brief Handle the dump RPKG command. 
+	 */
+	void HandleDumpRPKG();
+	
+	/**
+	 * @biref Handle the about command.
+	 */
+	void HandleAbout();
+	
+	// Data
 
-  RThread iDumbThread;
-
-  TDumberRPKGThreadData iDumbThreadData;
-
-  CPeriodic *iDumbThreadProgressChecker;
-
-  TInt64 iTargetSize;
-
-  bool iSizeChecked;
-};
+	/**
+	 * The application view
+	 * Owned by CDumberdoreAppUi
+	 */
+	CDumberdoreAppView* iAppView;
+	
+	CAknProgressDialog *iProgressDialog;
+	
+	RThread iDumbThread;
+	
+	TDumberRPKGThreadData iDumbThreadData;
+	
+	CPeriodic *iDumbThreadProgressChecker;
+	
+	TInt64 iTargetSize;
+	
+	bool iSizeChecked;
+	};
 
 #endif // __DUMBERDOREAPPUI_h__
 // End of File
