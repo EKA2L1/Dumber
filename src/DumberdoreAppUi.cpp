@@ -145,7 +145,7 @@ void CDumberdoreAppUi::PullOffErrorFromProgressUpdate(const TDesC &aErr) {
 	iDumbThreadProgressChecker->Cancel();
 }
 
-bool CDumberdoreAppUi::UpdateProgressBar() {
+TBool CDumberdoreAppUi::UpdateProgressBar() {
 	if (!iSizeChecked && (iTargetSize != 0)) {
 		RFs &theFs = iCoeEnv->FsSession();
 		
@@ -165,10 +165,10 @@ bool CDumberdoreAppUi::UpdateProgressBar() {
 			
 			PullOffErrorFromProgressUpdate(noteErrorBuf);
 			
-			return true;
+			return ETrue;
 		}
 
-		iSizeChecked = true;
+		iSizeChecked = ETrue;
 	}
 	
 	if (iDumbThread.Handle() == 0) {
@@ -192,7 +192,7 @@ bool CDumberdoreAppUi::UpdateProgressBar() {
 			CleanupStack::PopAndDestroy();
 			
 			PullOffErrorFromProgressUpdate(errorMsg);
-			return false;
+			return EFalse;
 		}
 		
 		iDumbThread.Resume();
@@ -201,7 +201,7 @@ bool CDumberdoreAppUi::UpdateProgressBar() {
 	if (iDumbThread.ExitType() != EExitPending) {
 		RDebug::Printf("Finished: %d %d", (int)iDumbThread.ExitType(), iDumbThread.ExitReason());
 		
-		bool shouldReturn = false;
+		TBool shouldReturn = EFalse;
 
 		if (iDumbThread.ExitReason() != KErrNone) {
 			HBufC* dumpFailureMsg = iEikonEnv->AllocReadResourceLC(R_DUMP_ERROR_ENCOUTERED_DIALOG_TEXT);
@@ -213,7 +213,7 @@ bool CDumberdoreAppUi::UpdateProgressBar() {
 			CleanupStack::PopAndDestroy(dumpFailureMsg);
 			PullOffErrorFromProgressUpdate(errMsg);
 			
-			shouldReturn = true;
+			shouldReturn = ETrue;
 		} else if (iTargetSize == 0) {
 			iTargetSize = iDumbThreadData.iProgress;
 			iDumbThreadData.iProgress = 0;
@@ -230,24 +230,24 @@ bool CDumberdoreAppUi::UpdateProgressBar() {
 			iDumbThreadProgressChecker->Cancel();
 			
 			// We are done, dumping then else? Nothing
-			shouldReturn = true;
+			shouldReturn = ETrue;
 		}
 
 		iDumbThread.Close();
 		iDumbThread.SetHandle(0);
 		
 		if (shouldReturn)
-			return true;
+			return ETrue;
 	}
 	
 	if (iTargetSize == 0) {
-		return true;
+		return ETrue;
 	}
 
 	CEikProgressInfo *info = iProgressDialog->GetProgressInfoL();
 	info->SetAndDraw(static_cast<TInt>(iDumbThreadData.iProgress * 100 / iTargetSize));
 
-	return true;
+	return ETrue;
 }
 
 void CDumberdoreAppUi::HandleDumpRPKG() {
@@ -308,7 +308,7 @@ void CDumberdoreAppUi::HandleDumpRPKG() {
 	iDumbThreadData.iProgress = 0;
 	iDumbThreadData.iPath.Append(_L("SYM.RPKG"));
 	iDumbThread.SetHandle(0);
-	iSizeChecked = false;
+	iSizeChecked = EFalse;
 	
 	iProgressDialog = new (ELeave) CAknProgressDialog((REINTERPRET_CAST(CEikDialog**,&iProgressDialog)));
 	iProgressDialog->PrepareLC(R_PROGRESS_NOTE);

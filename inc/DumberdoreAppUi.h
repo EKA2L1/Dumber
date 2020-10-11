@@ -56,7 +56,7 @@ public:
 	
 	virtual void DialogDismissedL (TInt aButtonId);
 	
-	bool UpdateProgressBar();
+	TBool UpdateProgressBar();
 
 private:
 	void PullOffErrorFromProgressUpdate(const TDesC &aErr);
@@ -119,7 +119,7 @@ private:
 	
 	TInt64 iTargetSize;
 	
-	bool iSizeChecked;
+	TBool iSizeChecked;
 	};
 
 #endif // __DUMBERDOREAPPUI_h__
