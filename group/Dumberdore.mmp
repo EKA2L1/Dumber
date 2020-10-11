@@ -46,7 +46,7 @@ LIBRARY		   commonengine.lib
 LIBRARY		   efsrv.lib 
 LIBRARY		   estor.lib
 LIBRARY        aknnotify.lib
-LIBRARY        hlplch.lib commondialogs.lib platformenv.lib eikctl.lib
+LIBRARY        hlplch.lib commondialogs.lib platformenv.lib eikctl.lib bafl.lib
  
 
 LANG SC

@@ -96,6 +96,11 @@ private:
 	 */
 	void HandleAbout();
 	
+	TBool CheckAccessToSystemFiles();
+	
+	void ShowErrorL(const TDesC &aMsg);
+	void ShowErrorL(TInt aResourceID);
+	
 	// Data
 
 	/**

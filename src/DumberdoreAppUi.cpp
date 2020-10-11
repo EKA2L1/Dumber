@@ -21,6 +21,7 @@
 #include <s32file.h>
 #include <hlplch.h>
 #include <pathinfo.h>
+#include <bautils.h>
 
 #include <dumberdore_0xe3ca2de5.rsg>
 #include "Dumberdore.hrh"
@@ -250,6 +251,13 @@ bool CDumberdoreAppUi::UpdateProgressBar() {
 }
 
 void CDumberdoreAppUi::HandleDumpRPKG() {
+	// Check is it possible to read data from system folders
+	if (!CheckAccessToSystemFiles())
+		{
+		TRAP_IGNORE(ShowErrorL(R_DUMP_ACCESS_DENIED_DIALOG_TEXT));
+		return;
+		}
+	
 	// Let user browse the file first
 	_LIT(KDumpRPKGFolderDriveChooser, "Choose destination drive");
 	_LIT(KDumpRPKGFolderBrowserTitle, "Choose destination folder");
@@ -371,6 +379,32 @@ void CDumberdoreAppUi::HandleStatusPaneSizeChange()
 CArrayFix<TCoeHelpContext>* CDumberdoreAppUi::HelpContextL() const
 	{
 	return NULL;
+	}
+
+TBool CDumberdoreAppUi::CheckAccessToSystemFiles()
+	{
+	_LIT(KPath, "z:\\sys\\");
+	CDir* files = NULL;
+	TInt r = iCoeEnv->FsSession().GetDir(KPath, KEntryAttMatchMask, ESortNone, files);
+	TInt ret = r == KErrNone && files != NULL;
+	delete files;
+	return ret;
+	}
+
+void CDumberdoreAppUi::ShowErrorL(const TDesC &aMsg)
+	{
+	CAknErrorNote* errNote = new (ELeave) CAknErrorNote;
+	CleanupStack::PushL(errNote);
+	errNote->SetTextL(aMsg);
+	CleanupStack::Pop(errNote);
+	errNote->ExecuteLD();
+	}
+
+void CDumberdoreAppUi::ShowErrorL(TInt aResourceId)
+	{
+	HBufC* msg = iEikonEnv->AllocReadResourceLC(aResourceId);
+	ShowErrorL(msg->Des());
+	CleanupStack::PopAndDestroy(msg);
 	}
 
 // End of File
