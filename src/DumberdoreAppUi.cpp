@@ -159,11 +159,14 @@ TBool CDumberdoreAppUi::UpdateProgressBar() {
 		if (driveVolume.iFree <= iTargetSize) {
 			HBufC* notEnoughSpaceDiag = iEikonEnv->AllocReadResourceLC(R_DUMP_NOT_ENOUGH_SPACE_DIALOG_TEXT);
 			
-			TBuf<1024> noteErrorBuf;
+			RBuf noteErrorBuf;
+			noteErrorBuf.CreateL(notEnoughSpaceDiag->Length() + 10);
+			noteErrorBuf.CleanupClosePushL();
 			noteErrorBuf.Format(notEnoughSpaceDiag->Des(), iTargetSize / 1024 / 1024);
-			CleanupStack::PopAndDestroy();
 			
 			PullOffErrorFromProgressUpdateL(noteErrorBuf);
+			
+			CleanupStack::PopAndDestroy(2, notEnoughSpaceDiag);
 			
 			return ETrue;
 		}
@@ -186,12 +189,15 @@ TBool CDumberdoreAppUi::UpdateProgressBar() {
 		if (threadCreateResult != KErrNone) {
 			HBufC* errorCreateThreadText = iEikonEnv->AllocReadResourceLC(R_DUMP_CREATE_THREAD_ERROR_DIALOG_TEXT);
 			
-			TBuf<256> errorMsg;
+			RBuf errorMsg;
+			errorMsg.CreateL(errorCreateThreadText->Length() + 10);
+			errorMsg.CleanupClosePushL();
 			errorMsg.Format(errorCreateThreadText->Des(), threadCreateResult);
 			
-			CleanupStack::PopAndDestroy();
-			
 			PullOffErrorFromProgressUpdateL(errorMsg);
+			
+			CleanupStack::PopAndDestroy(2, errorCreateThreadText);
+			
 			return EFalse;
 		}
 		
@@ -206,12 +212,15 @@ TBool CDumberdoreAppUi::UpdateProgressBar() {
 		if (iDumbThread.ExitReason() != KErrNone) {
 			HBufC* dumpFailureMsg = iEikonEnv->AllocReadResourceLC(R_DUMP_ERROR_ENCOUTERED_DIALOG_TEXT);
 		
-			TBuf<512> errMsg;
 			TExitCategoryName errCate = iDumbThread.ExitCategory();
+			RBuf errMsg;
+			errMsg.CreateL(dumpFailureMsg->Length() + 10 + errCate.Length());
+			errMsg.CleanupClosePushL();
 			errMsg.Format(dumpFailureMsg->Des(), iDumbThread.ExitReason(), &errCate);
 			
-			CleanupStack::PopAndDestroy(dumpFailureMsg);
 			PullOffErrorFromProgressUpdateL(errMsg);
+			
+			CleanupStack::PopAndDestroy(2, dumpFailureMsg);
 			
 			shouldReturn = ETrue;
 		} else if (iTargetSize == 0) {
