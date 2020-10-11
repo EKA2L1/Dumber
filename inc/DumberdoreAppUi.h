@@ -59,7 +59,7 @@ public:
 	TBool UpdateProgressBar();
 
 private:
-	void PullOffErrorFromProgressUpdate(const TDesC &aErr);
+	void PullOffErrorFromProgressUpdateL(const TDesC &aErr);
 	
 	// Functions from base classes
 

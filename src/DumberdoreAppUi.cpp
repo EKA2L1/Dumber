@@ -135,7 +135,7 @@ void CDumberdoreAppUi::DialogDismissedL (TInt aButtonId) {
 	iDumbThreadProgressChecker->Cancel();
 }
 
-void CDumberdoreAppUi::PullOffErrorFromProgressUpdate(const TDesC &aErr) {
+void CDumberdoreAppUi::PullOffErrorFromProgressUpdateL(const TDesC &aErr) {
 	CAknErrorNote *note = new (ELeave) CAknErrorNote();
 		
 	note->SetTextL(aErr);
@@ -163,7 +163,7 @@ TBool CDumberdoreAppUi::UpdateProgressBar() {
 			noteErrorBuf.Format(notEnoughSpaceDiag->Des(), iTargetSize / 1024 / 1024);
 			CleanupStack::PopAndDestroy();
 			
-			PullOffErrorFromProgressUpdate(noteErrorBuf);
+			PullOffErrorFromProgressUpdateL(noteErrorBuf);
 			
 			return ETrue;
 		}
@@ -191,7 +191,7 @@ TBool CDumberdoreAppUi::UpdateProgressBar() {
 			
 			CleanupStack::PopAndDestroy();
 			
-			PullOffErrorFromProgressUpdate(errorMsg);
+			PullOffErrorFromProgressUpdateL(errorMsg);
 			return EFalse;
 		}
 		
@@ -211,7 +211,7 @@ TBool CDumberdoreAppUi::UpdateProgressBar() {
 			errMsg.Format(dumpFailureMsg->Des(), iDumbThread.ExitReason(), &errCate);
 			
 			CleanupStack::PopAndDestroy(dumpFailureMsg);
-			PullOffErrorFromProgressUpdate(errMsg);
+			PullOffErrorFromProgressUpdateL(errMsg);
 			
 			shouldReturn = ETrue;
 		} else if (iTargetSize == 0) {
