@@ -46,14 +46,14 @@ LIBRARY		   commonengine.lib
 LIBRARY		   efsrv.lib 
 LIBRARY		   estor.lib
 LIBRARY        aknnotify.lib
-LIBRARY        hlplch.lib commondialogs.lib platformenv.lib eikctl.lib
+LIBRARY        hlplch.lib commondialogs.lib platformenv.lib eikctl.lib bafl.lib
  
 
 LANG SC
 
 VENDORID	  	  0
 SECUREID		  0xe3ca2de5
-CAPABILITY	  	  ReadUserData 
+CAPABILITY	  	  AllFiles ReadUserData 
 
 DEBUGGABLE_UDEBONLY
 // End of File

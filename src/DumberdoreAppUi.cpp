@@ -21,6 +21,7 @@
 #include <s32file.h>
 #include <hlplch.h>
 #include <pathinfo.h>
+#include <bautils.h>
 
 #include <dumberdore_0xe3ca2de5.rsg>
 #include "Dumberdore.hrh"
@@ -134,7 +135,7 @@ void CDumberdoreAppUi::DialogDismissedL (TInt aButtonId) {
 	iDumbThreadProgressChecker->Cancel();
 }
 
-void CDumberdoreAppUi::PullOffErrorFromProgressUpdate(const TDesC &aErr) {
+void CDumberdoreAppUi::PullOffErrorFromProgressUpdateL(const TDesC &aErr) {
 	CAknErrorNote *note = new (ELeave) CAknErrorNote();
 		
 	note->SetTextL(aErr);
@@ -144,7 +145,7 @@ void CDumberdoreAppUi::PullOffErrorFromProgressUpdate(const TDesC &aErr) {
 	iDumbThreadProgressChecker->Cancel();
 }
 
-bool CDumberdoreAppUi::UpdateProgressBar() {
+TBool CDumberdoreAppUi::UpdateProgressBar() {
 	if (!iSizeChecked && (iTargetSize != 0)) {
 		RFs &theFs = iCoeEnv->FsSession();
 		
@@ -158,16 +159,19 @@ bool CDumberdoreAppUi::UpdateProgressBar() {
 		if (driveVolume.iFree <= iTargetSize) {
 			HBufC* notEnoughSpaceDiag = iEikonEnv->AllocReadResourceLC(R_DUMP_NOT_ENOUGH_SPACE_DIALOG_TEXT);
 			
-			TBuf<1024> noteErrorBuf;
+			RBuf noteErrorBuf;
+			noteErrorBuf.CreateL(notEnoughSpaceDiag->Length() + 10);
+			noteErrorBuf.CleanupClosePushL();
 			noteErrorBuf.Format(notEnoughSpaceDiag->Des(), iTargetSize / 1024 / 1024);
-			CleanupStack::PopAndDestroy();
 			
-			PullOffErrorFromProgressUpdate(noteErrorBuf);
+			PullOffErrorFromProgressUpdateL(noteErrorBuf);
 			
-			return true;
+			CleanupStack::PopAndDestroy(2, notEnoughSpaceDiag);
+			
+			return ETrue;
 		}
 
-		iSizeChecked = true;
+		iSizeChecked = ETrue;
 	}
 	
 	if (iDumbThread.Handle() == 0) {
@@ -185,13 +189,16 @@ bool CDumberdoreAppUi::UpdateProgressBar() {
 		if (threadCreateResult != KErrNone) {
 			HBufC* errorCreateThreadText = iEikonEnv->AllocReadResourceLC(R_DUMP_CREATE_THREAD_ERROR_DIALOG_TEXT);
 			
-			TBuf<256> errorMsg;
+			RBuf errorMsg;
+			errorMsg.CreateL(errorCreateThreadText->Length() + 10);
+			errorMsg.CleanupClosePushL();
 			errorMsg.Format(errorCreateThreadText->Des(), threadCreateResult);
 			
-			CleanupStack::PopAndDestroy();
+			PullOffErrorFromProgressUpdateL(errorMsg);
 			
-			PullOffErrorFromProgressUpdate(errorMsg);
-			return false;
+			CleanupStack::PopAndDestroy(2, errorCreateThreadText);
+			
+			return EFalse;
 		}
 		
 		iDumbThread.Resume();
@@ -200,19 +207,22 @@ bool CDumberdoreAppUi::UpdateProgressBar() {
 	if (iDumbThread.ExitType() != EExitPending) {
 		RDebug::Printf("Finished: %d %d", (int)iDumbThread.ExitType(), iDumbThread.ExitReason());
 		
-		bool shouldReturn = false;
+		TBool shouldReturn = EFalse;
 
 		if (iDumbThread.ExitReason() != KErrNone) {
 			HBufC* dumpFailureMsg = iEikonEnv->AllocReadResourceLC(R_DUMP_ERROR_ENCOUTERED_DIALOG_TEXT);
 		
-			TBuf<512> errMsg;
 			TExitCategoryName errCate = iDumbThread.ExitCategory();
+			RBuf errMsg;
+			errMsg.CreateL(dumpFailureMsg->Length() + 10 + errCate.Length());
+			errMsg.CleanupClosePushL();
 			errMsg.Format(dumpFailureMsg->Des(), iDumbThread.ExitReason(), &errCate);
 			
-			CleanupStack::PopAndDestroy(dumpFailureMsg);
-			PullOffErrorFromProgressUpdate(errMsg);
+			PullOffErrorFromProgressUpdateL(errMsg);
 			
-			shouldReturn = true;
+			CleanupStack::PopAndDestroy(2, dumpFailureMsg);
+			
+			shouldReturn = ETrue;
 		} else if (iTargetSize == 0) {
 			iTargetSize = iDumbThreadData.iProgress;
 			iDumbThreadData.iProgress = 0;
@@ -229,27 +239,34 @@ bool CDumberdoreAppUi::UpdateProgressBar() {
 			iDumbThreadProgressChecker->Cancel();
 			
 			// We are done, dumping then else? Nothing
-			shouldReturn = true;
+			shouldReturn = ETrue;
 		}
 
 		iDumbThread.Close();
 		iDumbThread.SetHandle(0);
 		
 		if (shouldReturn)
-			return true;
+			return ETrue;
 	}
 	
 	if (iTargetSize == 0) {
-		return true;
+		return ETrue;
 	}
 
 	CEikProgressInfo *info = iProgressDialog->GetProgressInfoL();
 	info->SetAndDraw(static_cast<TInt>(iDumbThreadData.iProgress * 100 / iTargetSize));
 
-	return true;
+	return ETrue;
 }
 
 void CDumberdoreAppUi::HandleDumpRPKG() {
+	// Check is it possible to read data from system folders
+	if (!CheckAccessToSystemFiles())
+		{
+		TRAP_IGNORE(ShowErrorL(R_DUMP_ACCESS_DENIED_DIALOG_TEXT));
+		return;
+		}
+	
 	// Let user browse the file first
 	_LIT(KDumpRPKGFolderDriveChooser, "Choose destination drive");
 	_LIT(KDumpRPKGFolderBrowserTitle, "Choose destination folder");
@@ -300,7 +317,7 @@ void CDumberdoreAppUi::HandleDumpRPKG() {
 	iDumbThreadData.iProgress = 0;
 	iDumbThreadData.iPath.Append(_L("SYM.RPKG"));
 	iDumbThread.SetHandle(0);
-	iSizeChecked = false;
+	iSizeChecked = EFalse;
 	
 	iProgressDialog = new (ELeave) CAknProgressDialog((REINTERPRET_CAST(CEikDialog**,&iProgressDialog)));
 	iProgressDialog->PrepareLC(R_PROGRESS_NOTE);
@@ -371,6 +388,32 @@ void CDumberdoreAppUi::HandleStatusPaneSizeChange()
 CArrayFix<TCoeHelpContext>* CDumberdoreAppUi::HelpContextL() const
 	{
 	return NULL;
+	}
+
+TBool CDumberdoreAppUi::CheckAccessToSystemFiles()
+	{
+	_LIT(KPath, "z:\\sys\\");
+	CDir* files = NULL;
+	TInt r = iCoeEnv->FsSession().GetDir(KPath, KEntryAttMatchMask, ESortNone, files);
+	TInt ret = r == KErrNone && files != NULL;
+	delete files;
+	return ret;
+	}
+
+void CDumberdoreAppUi::ShowErrorL(const TDesC &aMsg)
+	{
+	CAknErrorNote* errNote = new (ELeave) CAknErrorNote;
+	CleanupStack::PushL(errNote);
+	errNote->SetTextL(aMsg);
+	CleanupStack::Pop(errNote);
+	errNote->ExecuteLD();
+	}
+
+void CDumberdoreAppUi::ShowErrorL(TInt aResourceId)
+	{
+	HBufC* msg = iEikonEnv->AllocReadResourceLC(aResourceId);
+	ShowErrorL(msg->Des());
+	CleanupStack::PopAndDestroy(msg);
 	}
 
 // End of File

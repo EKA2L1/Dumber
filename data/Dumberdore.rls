@@ -42,4 +42,6 @@
 
 #define qtn_dump_cancelled_dialog_text "Dump cancelled!"
 
+#define qtn_dump_access_denied_dialog_text "Access denied to system files!"
+
 // End of File

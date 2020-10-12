@@ -56,10 +56,10 @@ public:
 	
 	virtual void DialogDismissedL (TInt aButtonId);
 	
-	bool UpdateProgressBar();
+	TBool UpdateProgressBar();
 
 private:
-	void PullOffErrorFromProgressUpdate(const TDesC &aErr);
+	void PullOffErrorFromProgressUpdateL(const TDesC &aErr);
 	
 	// Functions from base classes
 
@@ -96,6 +96,11 @@ private:
 	 */
 	void HandleAbout();
 	
+	TBool CheckAccessToSystemFiles();
+	
+	void ShowErrorL(const TDesC &aMsg);
+	void ShowErrorL(TInt aResourceID);
+	
 	// Data
 
 	/**
@@ -114,7 +119,7 @@ private:
 	
 	TInt64 iTargetSize;
 	
-	bool iSizeChecked;
+	TBool iSizeChecked;
 	};
 
 #endif // __DUMBERDOREAPPUI_h__
