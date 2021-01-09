@@ -53,7 +53,7 @@ LANG SC
 
 VENDORID	  	  0
 SECUREID		  0xe3ca2de5
-CAPABILITY	  	  AllFiles ReadUserData 
+CAPABILITY	  	  AllFiles ReadDeviceData ReadUserData 
 
 DEBUGGABLE_UDEBONLY
 // End of File

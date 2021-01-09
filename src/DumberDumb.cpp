@@ -4,6 +4,8 @@
 #include <e32debug.h>
 #include <e32rom.h>
 
+#include <hal.h>
+
 const TInt KWriteChunkSize = 0x10000;
 
 namespace Dumber {
